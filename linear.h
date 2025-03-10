@@ -1,20 +1,25 @@
 #ifndef LINEAR_H
 #define LINEAR_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef struct {
     int rows;
     int cols;
     double* data;
 } Matrix;
 
-Matrix newMatrix(int rows, int cols);
-void initMatrix(Matrix* mat, const double vals[]);
-double get(Matrix mat, int row, int col);
-void set(Matrix* mat, int row, int col, double val);
-void freeMatrix(Matrix* mat);
-void freeMatrices(Matrix* mats[], int count);
-Matrix mult(Matrix left, Matrix right);
+Matrix* matrix_new(int rows, int cols);
+void matrix_init(Matrix* mat, const double vals[]);
+void free_matrix(Matrix* mat);
+void free_matrices(Matrix* mats[], int count);
 
-void printMatrix(Matrix mat, const char* name);
+int matrix_is_valid(const Matrix* mat, int row, int col);
+double matrix_get(const Matrix* mat, int row, int col);
+void matrix_set(Matrix* mat, int row, int col, double val);
+Matrix* matrix_mult(const Matrix* left, const Matrix* right);
+
+void matrix_print(const Matrix* mat, const char* name);
 
 #endif
