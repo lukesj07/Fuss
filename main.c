@@ -1,6 +1,10 @@
 #include "linear.h"
 #include "video.h"
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_scancode.h>
+#include <string.h>
 
 int main() {
     // Matrix test
@@ -36,10 +40,28 @@ int main() {
         return 1;
     }
 
-    SDL_RenderClear(handler.renderer);
-    SDL_RenderPresent(handler.renderer);
-    SDL_Delay(5000);
-    video_cleanup(&handler);
+    while (1) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            switch(event.type) {
+                case SDL_QUIT:
+                    video_cleanup(&handler);
+                    return 0;
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.scancode) {
+                        case SDL_SCANCODE_ESCAPE:
+                            video_cleanup(&handler);
+                            return 0;
+                        default:
+                            break;
+                        }
+                default:
+                    break;
+            }
+        }
 
-    return 0;
+        SDL_RenderClear(handler.renderer);
+        SDL_RenderPresent(handler.renderer);
+        SDL_Delay(16);
+    }
 }
