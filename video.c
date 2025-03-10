@@ -1,6 +1,6 @@
 #include "video.h"
 
-// returns status code.
+// returns status code. cleanup if fails
 int video_init(VideoHandler* handler) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());

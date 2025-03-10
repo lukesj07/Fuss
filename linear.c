@@ -41,7 +41,7 @@ void free_matrix(Matrix* mat) {
     free(mat);
 }
 
-// eg. freeMatrix((Matrix*[]) {a, b, c}, 3);
+// eg. matrix_free((Matrix*[]) {a, b, c}, 3);
 void free_matrices(Matrix* mats[], int count) {
     for (int i = 0; i < count; i++) {
         free_matrix(mats[i]);

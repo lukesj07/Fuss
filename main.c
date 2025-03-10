@@ -40,28 +40,33 @@ int main() {
         return 1;
     }
 
-    while (1) {
+    int running = 1;
+    while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch(event.type) {
                 case SDL_QUIT:
-                    video_cleanup(&handler);
-                    return 0;
+                    running = 0;
+                    break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.scancode) {
                         case SDL_SCANCODE_ESCAPE:
-                            video_cleanup(&handler);
-                            return 0;
+                            running = 0;
+                            break;
                         default:
                             break;
-                        }
+                    }
+                    break;
                 default:
                     break;
             }
         }
-
         SDL_RenderClear(handler.renderer);
+        // draw
         SDL_RenderPresent(handler.renderer);
         SDL_Delay(16);
     }
+
+    video_cleanup(&handler);
+    return 0;
 }
