@@ -50,6 +50,7 @@ void free_matrices(Matrix* mats[], int count) {
 }
 
 // checks if matrix/data is null and if is in bounds.
+// 1 = true, 0 = false
 int matrix_is_valid(const Matrix* mat, int row, int col) {
     if (mat == NULL || mat->data == NULL) {
         fprintf(stderr, "Error: NULL matrix or data\n");
@@ -130,3 +131,5 @@ void matrix_print(const Matrix* mat, const char* name) {
         printf("]\n");
     }
 }
+
+// TODO: add cross (and maybe dot) product function

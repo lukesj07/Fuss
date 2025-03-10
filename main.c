@@ -1,10 +1,5 @@
 #include "linear.h"
 #include "video.h"
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_scancode.h>
-#include <string.h>
 
 int main() {
     // Matrix test
@@ -70,3 +65,5 @@ int main() {
     video_cleanup(&handler);
     return 0;
 }
+
+// TODO: make projection matrix, sample mesh (rotate?), and draw

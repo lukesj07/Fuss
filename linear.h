@@ -22,4 +22,4 @@ Matrix* matrix_mult(const Matrix* left, const Matrix* right);
 
 void matrix_print(const Matrix* mat, const char* name);
 
-#endif
+#endif // ! LINEAR_H

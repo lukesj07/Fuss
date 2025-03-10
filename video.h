@@ -16,4 +16,4 @@ typedef struct {
 int video_init(VideoHandler* handler);
 void video_cleanup(VideoHandler* handler);
 
-#endif //
+#endif // ! VIDEO_H
