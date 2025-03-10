@@ -7,7 +7,7 @@
 typedef struct {
     int rows;
     int cols;
-    double* data;
+    double* data; // used as 1d array (wraps around at each row)
 } Matrix;
 
 Matrix* matrix_new(int rows, int cols);
