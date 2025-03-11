@@ -82,23 +82,6 @@ void matrix_set(Matrix* mat, int row, int col, double val) {
     mat->data[row * mat->cols + col] = val;
 }
 
-void matrix_normalize(Matrix* mat) {
-    if (!matrix_is_valid(mat, 0, 0)) {
-        return;
-    }
-
-    for (int col = 0; col < mat->cols; col++) {
-        double sum = 0;
-        for (int row = 0; row < mat->rows; row++) {
-            sum += pow(matrix_get(mat, row, col), 2);
-        }
-        sum = sqrt(sum);
-        for (int row = 0; row < mat->rows; row++) {
-            matrix_set(mat, row, col, matrix_get(mat, row, col) / sum);
-        }
-    }
-}
-
 // make sure to free result after done.
 // returns null matrix struct if error.
 Matrix* matrix_mult(const Matrix* left, const Matrix* right) {

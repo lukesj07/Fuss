@@ -71,8 +71,6 @@ int main() {
     }
 
 
-
-
     VideoHandler handler = {
         .window = NULL,
         .renderer = NULL
@@ -114,28 +112,29 @@ int main() {
         model_matrix = new_model;
 
         for (int i = 0; i < cube_mesh->num_triangles; i++) {
-            Matrix* edge_a = matrix_subtract(cube_mesh->tris[i].vertices[0], cube_mesh->tris[i].vertices[1]);
-            Matrix* edge_b = matrix_subtract(cube_mesh->tris[i].vertices[2], cube_mesh->tris[i].vertices[1]);
+            Matrix* rotated_verts[3];
+            for (int j = 0; j < 3; j++) {
+                rotated_verts[j] = matrix_mult(model_matrix, cube_mesh->tris[i].vertices[j]);
+                matrix_set(rotated_verts[j], 2, 0, matrix_get(rotated_verts[j], 2, 0) + 3.0);
+            }
+
+            Matrix* edge_a = matrix_subtract(rotated_verts[0], rotated_verts[1]);
+            Matrix* edge_b = matrix_subtract(rotated_verts[2], rotated_verts[1]);
             Matrix* cross_prod = cross_mult(edge_a, edge_b);
-            matrix_normalize(cross_prod);
 
-            int culled = 0;
-
+            Matrix* camera_to_point = matrix_subtract(rotated_verts[0], camera_pos);
+            if (dot_mult(cross_prod, camera_to_point) < 0.0) {
+                free_matrices(rotated_verts, 3);
+                free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
+                continue;
+            }
+            
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
-                Matrix* rotated = matrix_mult(model_matrix, cube_mesh->tris[i].vertices[j]);
-                Matrix* camera_to_point = matrix_subtract(rotated, camera_pos);
-                if (dot_mult(cross_prod, camera_to_point) > 0.0) {
-                    free_matrix(rotated);
-                    free_matrix(camera_to_point);
-                    culled = 1;
-                    break;
-                }
-                
                 Matrix* homog = matrix_new(4, 1);
-                matrix_set(homog, 0, 0, matrix_get(rotated, 0, 0));
-                matrix_set(homog, 1, 0, matrix_get(rotated, 1, 0));
-                matrix_set(homog, 2, 0, matrix_get(rotated, 2, 0) + 3.0);
+                matrix_set(homog, 0, 0, matrix_get(rotated_verts[j], 0, 0));
+                matrix_set(homog, 1, 0, matrix_get(rotated_verts[j], 1, 0));
+                matrix_set(homog, 2, 0, matrix_get(rotated_verts[j], 2, 0));
                 matrix_set(homog, 3, 0, 1);
 
 
@@ -151,19 +150,16 @@ int main() {
                 matrix_set(proj_results[j], 1, 0, (matrix_get(proj_results[j], 1, 0) + 1) * 0.5 * SCREEN_HEIGHT);
 
                 free_matrix(homog);
-                free_matrix(rotated);
             }
-            if (!culled) {
-                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
-                                   matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
-                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0),
-                                   matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0));
-                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0),
-                                   matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
-                free_matrices(proj_results, 3);
-            }
-
-            free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod}, 3);
+            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
+                               matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
+            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0),
+                               matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0));
+            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0),
+                               matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
+            free_matrices(proj_results, 3);
+            free_matrices(rotated_verts, 3);
+            free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
         }
         SDL_RenderPresent(handler.renderer);
         SDL_Delay(16);
