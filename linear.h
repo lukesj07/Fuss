@@ -19,6 +19,8 @@ int matrix_is_valid(const Matrix* mat, int row, int col);
 double matrix_get(const Matrix* mat, int row, int col);
 void matrix_set(Matrix* mat, int row, int col, double val);
 Matrix* matrix_mult(const Matrix* left, const Matrix* right);
+Matrix* matrix_subtract(const Matrix* left, const Matrix* right);
+Matrix* cross_mult(const Matrix* left, const Matrix* right);
 
 void matrix_print(const Matrix* mat, const char* name);
 

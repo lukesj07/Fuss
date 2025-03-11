@@ -113,6 +113,29 @@ Matrix* matrix_mult(const Matrix* left, const Matrix* right) {
 
 // make sure to free result after done.
 // returns null matrix struct if error.
+Matrix* matrix_subtract(const Matrix* left, const Matrix* right) {
+    if (!matrix_is_valid(left, 0, 0) || !matrix_is_valid(right, 0, 0)) {
+        return NULL;
+    }
+
+    if (left->cols != right->cols || left->rows != right->cols) {
+        fprintf(stderr, "Matrix sizes must match for subtraction: %dx%d - %dx%d\n",
+                left->rows, left->cols, right->rows, right->cols);
+        return NULL;
+    }
+
+    Matrix* result = matrix_new(left->rows, left->cols);
+
+    for (int row = 0; row < left->rows; row++) {
+        for (int col = 0; col < left->cols; col++) {
+            matrix_set(result, row, col, matrix_get(left, row, col) - matrix_get(right, row, col));
+        }
+    }
+    return result;
+}
+
+// make sure to free result after done.
+// returns null matrix struct if error.
 Matrix* cross_mult(const Matrix* left, const Matrix* right) {
     if (!matrix_is_valid(left, 0, 0) || !matrix_is_valid(right, 0, 0)) {
         return NULL;
@@ -133,6 +156,7 @@ Matrix* cross_mult(const Matrix* left, const Matrix* right) {
     matrix_init(result, product);
     return result;
 }
+
 
 void matrix_print(const Matrix* mat, const char* name) {
     if (mat == NULL || mat->data == NULL || mat->rows == 0 || mat->cols == 0) {
