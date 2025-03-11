@@ -1,10 +1,29 @@
 #include "geometry.h"
 #include "linear.h"
 #include "video.h"
-#include <SDL2/SDL_render.h>
 #include <math.h>
 
 int main() {
+
+    // init matrices
+    Matrix* rot_matrix = matrix_new(3, 3);
+    const double rot_arr[] = {
+        cos(0.01), -sin(0.01), 0,
+        cos(0.01)*sin(0.01), cos(0.01)*cos(0.01), -sin(0.01),
+        sin(0.01)*sin(0.01), cos(0.01)*sin(0.01), cos(0.01)
+    };
+    matrix_init(rot_matrix, rot_arr);
+
+
+    Matrix* model_matrix = matrix_new(3, 3);
+    const double identity4x4[] = {
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1,
+    };
+    matrix_init(model_matrix, identity4x4);
+
+
     // make projection matrix
     const double f = 1/tan(FOV_DEG * M_PI / 360.0);
     const double q = ZFAR / (ZFAR - ZNEAR);
@@ -15,6 +34,9 @@ int main() {
                        0, 0, q, -ZNEAR * q
     };
     matrix_init(proj_matrix, proj_arr);
+
+
+
 
     // make vertices
     Matrix* coord_vecs[8];
@@ -86,15 +108,21 @@ int main() {
         SDL_RenderClear(handler.renderer);
         SDL_SetRenderDrawColor(handler.renderer, 255, 255, 255, 255);
         // draw
+        
+        Matrix* new_model = matrix_mult(rot_matrix, model_matrix);
+        free_matrix(model_matrix);
+        model_matrix = new_model;
+
         for (int i = 0; i < cube_mesh->num_triangles; i++) {
+
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
-                const Matrix* original = cube_mesh->tris[i].vertices[j];
+                Matrix* rotated = matrix_mult(model_matrix, cube_mesh->tris[i].vertices[j]);
 
                 Matrix* homog = matrix_new(4, 1);
-                matrix_set(homog, 0, 0, matrix_get(original, 0, 0));
-                matrix_set(homog, 1, 0, matrix_get(original, 1, 0));
-                matrix_set(homog, 2, 0, matrix_get(original, 2, 0) + 3.0);
+                matrix_set(homog, 0, 0, matrix_get(rotated, 0, 0));
+                matrix_set(homog, 1, 0, matrix_get(rotated, 1, 0));
+                matrix_set(homog, 2, 0, matrix_get(rotated, 2, 0) + 3.0);
                 matrix_set(homog, 3, 0, 1);
 
 
@@ -110,6 +138,7 @@ int main() {
                 matrix_set(proj_results[j], 1, 0, (matrix_get(proj_results[j], 1, 0) + 1) * 0.5 * SCREEN_HEIGHT);
 
                 free_matrix(homog);
+                free_matrix(rotated);
             }
             SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
                                matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
@@ -126,9 +155,8 @@ int main() {
 
     free_mesh(cube_mesh);
     free_matrices(coord_vecs, 8);
+    free_matrix(rot_matrix);
     free_matrix(proj_matrix);
     video_cleanup(&handler);
     return 0;
 }
-
-// TODO: make projection matrix and draw
