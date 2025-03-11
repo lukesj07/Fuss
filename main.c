@@ -1,28 +1,41 @@
+#include "geometry.h"
 #include "linear.h"
 #include "video.h"
+#include <math.h>
 
 int main() {
-    // Matrix test
-    Matrix* mat1 = matrix_new(3, 3);
-    double mat1vals[] = {
-        1, 0, 0,
-        0, 1, 0,
-        1, 0, 1
+    Matrix* coord_vecs[8];
+    for (int i = 0; i < 8; i++) {
+        const double coord[] = {i & 1, i & 2, i & 4};
+        coord_vecs[i] = matrix_new(3, 1);
+        matrix_init(coord_vecs[i], coord);
+    }
+
+    const int triangle_indices[][3] = {
+        // south
+        {0, 2, 3}, {0, 3, 1},
+        // east
+        {1, 3, 7}, {1, 7, 5},
+        // north
+        {5, 7, 6}, {5, 6, 4},
+        // wes
+        {4, 6, 2}, {4, 2, 0},
+        // top
+        {2, 6, 7}, {2, 7, 3},
+        // bottom
+        {1, 5, 4}, {1, 4, 0}
     };
-    matrix_init(mat1, mat1vals);
+    
+    Mesh* cube_mesh = mesh_new(12);
+    for (int i = 0; i < cube_mesh->num_triangles; i++) {
+        Matrix* vertices[3];
+        for (int j = 0; j < 3; j++) {
+            vertices[j] = coord_vecs[triangle_indices[i][j]];
+        }
+        mesh_set(cube_mesh, i, triangle_new(vertices[0], vertices[1], vertices[2]));
+    }
 
-    Matrix* mat2 = matrix_new(3, 3);
-    double mat2vals[] = {
-        1, 2, 3,
-        1, 2, 3,
-        0, 0, 0
-    };
-    matrix_init(mat2, mat2vals);
 
-    Matrix* result = matrix_mult(mat1, mat2);
-    matrix_print(result, "Result");
-
-    free_matrices((Matrix*[]){mat1, mat2, result}, 3);
 
     // SDL Test
     VideoHandler handler = {
@@ -62,6 +75,8 @@ int main() {
         SDL_Delay(16);
     }
 
+    free_mesh(cube_mesh);
+    free_matrices(coord_vecs, 8);
     video_cleanup(&handler);
     return 0;
 }
