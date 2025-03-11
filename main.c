@@ -7,7 +7,7 @@ int main() {
     // init matrices
     Matrix* rot_matrix = matrix_new(3, 3);
     const double rot_arr[] = {
-        cos(0.01), -sin(0.01), 0,
+    cos(0.01), -sin(0.01), 0,
         cos(0.01)*sin(0.01), cos(0.01)*cos(0.01), -sin(0.01),
         sin(0.01)*sin(0.01), cos(0.01)*sin(0.01), cos(0.01)
     };
@@ -57,7 +57,8 @@ int main() {
         // top
         {2, 6, 7}, {2, 7, 3},
         // bottom
-        {1, 5, 4}, {1, 4, 0} };
+        {1, 5, 4}, {1, 4, 0}
+    };
     
     Mesh* cube_mesh = mesh_new(12);
     for (int i = 0; i < cube_mesh->num_triangles; i++) {
@@ -123,7 +124,7 @@ int main() {
             Matrix* cross_prod = cross_mult(edge_a, edge_b);
 
             Matrix* camera_to_point = matrix_subtract(rotated_verts[0], camera_pos);
-            if (dot_mult(cross_prod, camera_to_point) < 0.0) {
+            if (dot_mult(cross_prod, camera_to_point) <= 0.0) {
                 free_matrices(rotated_verts, 3);
                 free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
                 continue;
@@ -173,3 +174,4 @@ int main() {
     video_cleanup(&handler);
     return 0;
 }
+// TODO: add lighting

@@ -28,3 +28,5 @@ void video_cleanup(VideoHandler* handler) {
     SDL_DestroyWindow(handler->window);
     SDL_Quit();
 }
+
+// TODO: make triangle rasterizer

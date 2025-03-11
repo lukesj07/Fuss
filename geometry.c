@@ -53,4 +53,5 @@ void free_mesh(Mesh* mesh) {
     free(mesh);
 }
 
-// TODO: add triangle normal function
+// TODO: add color to triangle struct
+// create a triangle normal function?
