@@ -19,7 +19,7 @@ int main() {
     // make vertices
     Matrix* coord_vecs[8];
     for (int i = 0; i < 8; i++) {
-        const double coord[] = {i & 1, i & 2, i & 4};
+        const double coord[] = {i & 1, (i & 2) >> 1, (i & 4) >> 2};
         coord_vecs[i] = matrix_new(3, 1);
         matrix_init(coord_vecs[i], coord);
     }
@@ -90,7 +90,7 @@ int main() {
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
                 Matrix* homog = matrix_new(4, 1);
-                const Matrix* original = cube_mesh->tris->vertices[j];
+                const Matrix* original = cube_mesh->tris[i].vertices[j];
                 matrix_set(homog, 0, 0, matrix_get(original, 0, 0));
                 matrix_set(homog, 1, 0, matrix_get(original, 1, 0));
                 matrix_set(homog, 2, 0, matrix_get(original, 2, 0));
@@ -128,9 +128,6 @@ int main() {
     free_matrix(proj_matrix);
     video_cleanup(&handler);
     return 0;
-}
-
-void draw_triangle(Matrix* vertices[], SDL_Renderer* renderer) {
 }
 
 // TODO: make projection matrix and draw
