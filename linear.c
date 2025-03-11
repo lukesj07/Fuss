@@ -88,13 +88,13 @@ void matrix_normalize(Matrix* mat) {
     }
 
     for (int col = 0; col < mat->cols; col++) {
-        double row_sum = 0;
+        double sum = 0;
         for (int row = 0; row < mat->rows; row++) {
-            row_sum += pow(matrix_get(mat, row, col), 2);
+            sum += pow(matrix_get(mat, row, col), 2);
         }
-        row_sum = sqrt(row_sum);
+        sum = sqrt(sum);
         for (int row = 0; row < mat->rows; row++) {
-            matrix_set(mat, row, col, matrix_get(mat, row, col) / row_sum);
+            matrix_set(mat, row, col, matrix_get(mat, row, col) / sum);
         }
     }
 }
@@ -133,7 +133,7 @@ Matrix* matrix_subtract(const Matrix* left, const Matrix* right) {
         return NULL;
     }
 
-    if (left->cols != right->cols || left->rows != right->cols) {
+    if (left->cols != right->cols || left->rows != right->rows) {
         fprintf(stderr, "Matrix sizes must match for subtraction: %dx%d - %dx%d\n",
                 left->rows, left->cols, right->rows, right->cols);
         return NULL;

@@ -119,14 +119,16 @@ int main() {
             Matrix* cross_prod = cross_mult(edge_a, edge_b);
             matrix_normalize(cross_prod);
 
+            int culled = 0;
+
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
                 Matrix* rotated = matrix_mult(model_matrix, cube_mesh->tris[i].vertices[j]);
-                    
                 Matrix* camera_to_point = matrix_subtract(rotated, camera_pos);
                 if (dot_mult(cross_prod, camera_to_point) > 0.0) {
                     free_matrix(rotated);
                     free_matrix(camera_to_point);
+                    culled = 1;
                     break;
                 }
                 
@@ -151,14 +153,16 @@ int main() {
                 free_matrix(homog);
                 free_matrix(rotated);
             }
-            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
-                               matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
-            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0),
-                               matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0));
-            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0),
-                               matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
+            if (!culled) {
+                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
+                                   matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
+                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0),
+                                   matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0));
+                SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0),
+                                   matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
+                free_matrices(proj_results, 3);
+            }
 
-            free_matrices(proj_results, 3);
             free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod}, 3);
         }
         SDL_RenderPresent(handler.renderer);
