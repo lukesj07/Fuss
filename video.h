@@ -11,7 +11,7 @@
 #define ZNEAR 0.1
 #define ZFAR 1000.0
 #define FOV_DEG 60.0
-#define ASPECT_RATIO ((double)SCREEN_WIDTH / (double)SCREEN_HEIGHT)
+#define ASPECT_RATIO ((double)SCREEN_HEIGHT / (double)SCREEN_WIDTH)
 
 typedef struct {
     SDL_Window* window;
