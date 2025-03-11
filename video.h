@@ -8,6 +8,11 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define ZNEAR 0.1
+#define ZFAR 1000.0
+#define FOV_DEG 60.0
+#define ASPECT_RATIO ((double)SCREEN_WIDTH / (double)SCREEN_HEIGHT)
+
 typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;

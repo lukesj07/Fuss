@@ -6,7 +6,7 @@
 #include "linear.h"
 
 typedef struct {
-    Matrix* points[3];
+    Matrix* vertices[3];
 } Triangle;
 
 typedef struct {

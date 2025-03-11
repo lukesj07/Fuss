@@ -9,9 +9,9 @@ Triangle* triangle_new(Matrix* p1, Matrix* p2, Matrix* p3) {
         return NULL;
     }
 
-    tri->points[0] = p1;
-    tri->points[1] = p2;
-    tri->points[2] = p3;
+    tri->vertices[0] = p1;
+    tri->vertices[1] = p2;
+    tri->vertices[2] = p3;
 
     return tri;
 }
