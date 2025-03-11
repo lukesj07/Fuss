@@ -16,12 +16,12 @@ int main() {
 
 
     Matrix* model_matrix = matrix_new(3, 3);
-    const double identity4x4[] = {
+    const double identity3x3[] = {
         1, 0, 0,
         0, 1, 0,
         0, 0, 1,
     };
-    matrix_init(model_matrix, identity4x4);
+    matrix_init(model_matrix, identity3x3);
 
 
     // make projection matrix
@@ -72,7 +72,9 @@ int main() {
         free(tri); // triangle gets copied so must be freed
     }
 
-    // SDL Test
+
+
+
     VideoHandler handler = {
         .window = NULL,
         .renderer = NULL
