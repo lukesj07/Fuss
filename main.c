@@ -1,7 +1,6 @@
 #include "geometry.h"
 #include "linear.h"
 #include "video.h"
-#include <math.h>
 
 int main() {
 
@@ -35,8 +34,7 @@ int main() {
     };
     matrix_init(proj_matrix, proj_arr);
 
-
-
+    Matrix* camera_pos = matrix_new(3, 1); // malloc auto initializes to 0
 
     // make vertices
     Matrix* coord_vecs[8];
@@ -116,11 +114,22 @@ int main() {
         model_matrix = new_model;
 
         for (int i = 0; i < cube_mesh->num_triangles; i++) {
+            Matrix* edge_a = matrix_subtract(cube_mesh->tris[i].vertices[0], cube_mesh->tris[i].vertices[1]);
+            Matrix* edge_b = matrix_subtract(cube_mesh->tris[i].vertices[2], cube_mesh->tris[i].vertices[1]);
+            Matrix* cross_prod = cross_mult(edge_a, edge_b);
+            matrix_normalize(cross_prod);
 
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
                 Matrix* rotated = matrix_mult(model_matrix, cube_mesh->tris[i].vertices[j]);
-
+                    
+                Matrix* camera_to_point = matrix_subtract(rotated, camera_pos);
+                if (dot_mult(cross_prod, camera_to_point) > 0.0) {
+                    free_matrix(rotated);
+                    free_matrix(camera_to_point);
+                    break;
+                }
+                
                 Matrix* homog = matrix_new(4, 1);
                 matrix_set(homog, 0, 0, matrix_get(rotated, 0, 0));
                 matrix_set(homog, 1, 0, matrix_get(rotated, 1, 0));
@@ -150,6 +159,7 @@ int main() {
                                matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
 
             free_matrices(proj_results, 3);
+            free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod}, 3);
         }
         SDL_RenderPresent(handler.renderer);
         SDL_Delay(16);
@@ -159,6 +169,7 @@ int main() {
     free_matrices(coord_vecs, 8);
     free_matrix(rot_matrix);
     free_matrix(proj_matrix);
+    free_matrix(camera_pos);
     video_cleanup(&handler);
     return 0;
 }

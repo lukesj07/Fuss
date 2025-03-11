@@ -1,5 +1,4 @@
 #include "linear.h"
-#include <stdio.h>
 
 // creates a row-major matrix struct.
 // make sure to free after done with matrix.
@@ -83,6 +82,22 @@ void matrix_set(Matrix* mat, int row, int col, double val) {
     mat->data[row * mat->cols + col] = val;
 }
 
+void matrix_normalize(Matrix* mat) {
+    if (!matrix_is_valid(mat, 0, 0)) {
+        return;
+    }
+
+    for (int col = 0; col < mat->cols; col++) {
+        double row_sum = 0;
+        for (int row = 0; row < mat->rows; row++) {
+            row_sum += pow(matrix_get(mat, row, col), 2);
+        }
+        row_sum = sqrt(row_sum);
+        for (int row = 0; row < mat->rows; row++) {
+            matrix_set(mat, row, col, matrix_get(mat, row, col) / row_sum);
+        }
+    }
+}
 
 // make sure to free result after done.
 // returns null matrix struct if error.
@@ -157,6 +172,22 @@ Matrix* cross_mult(const Matrix* left, const Matrix* right) {
     return result;
 }
 
+double dot_mult(const Matrix* left, const Matrix* right) {
+    if (!matrix_is_valid(left, 0, 0) || !matrix_is_valid(right, 0, 0)) {
+        return 0.0;
+    }
+    if (left->cols != 1 || right->cols != 1 || left->rows != right->rows) {
+        fprintf(stderr, "Invalid sizes for dot product: %dx%d . %dx%d\n",
+                left->rows, left->cols, right->rows, right->cols);
+        return 0.0;
+    }
+    double sum = 0;
+    for (int row = 0; row < left->rows; row++) {
+        sum += matrix_get(left, row, 0) * matrix_get(right, row, 0);
+    }
+    return sum;
+}
+
 
 void matrix_print(const Matrix* mat, const char* name) {
     if (mat == NULL || mat->data == NULL || mat->rows == 0 || mat->cols == 0) {
@@ -179,5 +210,3 @@ void matrix_print(const Matrix* mat, const char* name) {
         printf("]\n");
     }
 }
-
-// TODO: add cross (and maybe dot) product function
