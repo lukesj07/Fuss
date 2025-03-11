@@ -89,15 +89,16 @@ int main() {
         for (int i = 0; i < cube_mesh->num_triangles; i++) {
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
-                Matrix* homog = matrix_new(4, 1);
                 const Matrix* original = cube_mesh->tris[i].vertices[j];
+
+                Matrix* homog = matrix_new(4, 1);
                 matrix_set(homog, 0, 0, matrix_get(original, 0, 0));
                 matrix_set(homog, 1, 0, matrix_get(original, 1, 0));
-                matrix_set(homog, 2, 0, matrix_get(original, 2, 0));
+                matrix_set(homog, 2, 0, matrix_get(original, 2, 0) + 3.0);
                 matrix_set(homog, 3, 0, 1);
 
 
-                const double z = matrix_get(original, 2, 0);
+                const double z = matrix_get(homog, 2, 0);
                 proj_results[j] = matrix_mult(proj_matrix, homog);
                 if (z != 0) {
                     matrix_set(proj_results[j], 0, 0, matrix_get(proj_results[j], 0, 0) / z);
