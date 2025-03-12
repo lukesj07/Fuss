@@ -66,7 +66,7 @@ int main() {
         for (int j = 0; j < 3; j++) {
             vertices[j] = coord_vecs[triangle_indices[i][j]];
         }
-        Triangle* tri = triangle_new(vertices[0], vertices[1], vertices[2]);
+        Triangle* tri = triangle_new(vertices, (Matrix* []){NULL, NULL, NULL});
         mesh_set(cube_mesh, i, tri);
         free(tri); // triangle gets copied so must be freed
     }

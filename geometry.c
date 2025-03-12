@@ -2,17 +2,17 @@
 
 // points should be going clockwise. 3x1 matrices for vectors.
 // freeing triangle does not free points (might be shared).
-Triangle* triangle_new(Matrix* p1, Matrix* p2, Matrix* p3) {
+Triangle* triangle_new(Matrix* vertices[], Matrix* colors[]) {
     Triangle* tri = (Triangle*)malloc(sizeof(Triangle));
     if (tri == NULL) {
         fprintf(stderr, "Error allocating memory for triangle\n");
         return NULL;
     }
 
-    tri->vertices[0] = p1;
-    tri->vertices[1] = p2;
-    tri->vertices[2] = p3;
-
+    for (int i = 0; i < 3; i++) {
+        tri->vertices[i] = vertices[i];
+        tri->colors[i] = colors[i];
+    }
     return tri;
 }
 

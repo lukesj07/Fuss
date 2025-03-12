@@ -7,6 +7,7 @@
 
 typedef struct {
     Matrix* vertices[3];
+    Matrix* colors[3];
 } Triangle;
 
 typedef struct {
@@ -14,7 +15,7 @@ typedef struct {
     Triangle* tris;
 } Mesh;
 
-Triangle* triangle_new(Matrix* p1, Matrix* p2, Matrix* p3);
+Triangle* triangle_new(Matrix* vertices[], Matrix* colors[]);
 
 Mesh* mesh_new(int num_triangles);
 void mesh_set(Mesh* mesh, int index, Triangle* tri);
