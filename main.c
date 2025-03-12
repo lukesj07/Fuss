@@ -1,6 +1,7 @@
 #include "geometry.h"
 #include "linear.h"
 #include "video.h"
+#include "render.h"
 
 int main() {
 
@@ -60,16 +61,21 @@ int main() {
         {1, 5, 4}, {1, 4, 0}
     };
     
+    Matrix* red_vec = matrix_new(3, 1);
+    const double red_arr[] = {255, 0, 0};
+    matrix_init(red_vec, red_arr);
+
     Mesh* cube_mesh = mesh_new(12);
     for (int i = 0; i < cube_mesh->num_triangles; i++) {
         Matrix* vertices[3];
         for (int j = 0; j < 3; j++) {
             vertices[j] = coord_vecs[triangle_indices[i][j]];
         }
-        Triangle* tri = triangle_new(vertices, (Matrix* []){NULL, NULL, NULL});
+        Triangle* tri = triangle_new(vertices, (Matrix*[]){red_vec, red_vec, red_vec});
         mesh_set(cube_mesh, i, tri);
         free(tri); // triangle gets copied so must be freed
     }
+    free_matrix(red_vec);
 
 
     VideoHandler handler = {
@@ -152,12 +158,18 @@ int main() {
 
                 free_matrix(homog);
             }
-            SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
+            /* SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0),
                                matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0));
             SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[1], 0, 0), matrix_get(proj_results[1], 1, 0),
                                matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0));
             SDL_RenderDrawLine(handler.renderer, matrix_get(proj_results[2], 0, 0), matrix_get(proj_results[2], 1, 0),
                                matrix_get(proj_results[0], 0, 0), matrix_get(proj_results[0], 1, 0));
+            */
+
+            Triangle* proj_tri = triangle_new(proj_results, cube_mesh->tris[i].colors);
+            draw_triangle(handler.renderer, proj_tri);
+            free(proj_tri);
+
             free_matrices(proj_results, 3);
             free_matrices(rotated_verts, 3);
             free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
