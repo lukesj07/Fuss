@@ -8,7 +8,7 @@ double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
         * (matrix_get(c, 0, 0) - matrix_get(a, 0, 0)));
 }
 
-void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer?
+void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer? and somehow incorporate lighting..
     const Matrix* a = tri->vertices[0];
     const Matrix* b = tri->vertices[1];
     const Matrix* c = tri->vertices[2];
@@ -66,7 +66,6 @@ void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer?
                 const double bc_b = cap / abc;
                 const double bc_c = abp / abc;
                 
-                // Interpolate colors
                 const Uint8 r = (Uint8)(matrix_get(tri->colors[0], 0, 0) * bc_a
                     + matrix_get(tri->colors[1], 0, 0) * bc_b
                     + matrix_get(tri->colors[2], 0, 0) * bc_c);

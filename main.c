@@ -89,6 +89,7 @@ int main() {
         return 1;
     }
 
+    SDL_SetRenderDrawColor(handler.renderer, 0, 0, 0, 255);
     int running = 1;
     while (running) {
         SDL_Event event;
@@ -110,7 +111,6 @@ int main() {
                     break;
             }
         }
-        SDL_SetRenderDrawColor(handler.renderer, 0, 0, 0, 255);
         SDL_RenderClear(handler.renderer);
         // draw
         
