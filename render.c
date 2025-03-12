@@ -8,7 +8,7 @@ double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
         * (matrix_get(c, 0, 0) - matrix_get(a, 0, 0)));
 }
 
-void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer? and somehow incorporate lighting..
+void draw_triangle(SDL_Renderer* renderer, const Triangle* tri, const double light_factor) { //  add z buffer? and somehow incorporate lighting..
     const Matrix* a = tri->vertices[0];
     const Matrix* b = tri->vertices[1];
     const Matrix* c = tri->vertices[2];
@@ -50,10 +50,10 @@ void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer? an
     
     Matrix* p = matrix_new(2, 1);
     
-    for (int y = miny; y < maxy; y++) {
+    for (int y = miny; y <= maxy; y++) {
         matrix_set(p, 1, 0, y);
         
-        for (int x = minx; x < maxx; x++) {
+        for (int x = minx; x <= maxx; x++) {
             matrix_set(p, 0, 0, x);
             
             const double abp = edge_function(a, b, p);
@@ -66,15 +66,15 @@ void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { //  add z buffer? an
                 const double bc_b = cap / abc;
                 const double bc_c = abp / abc;
                 
-                const Uint8 r = (Uint8)(matrix_get(tri->colors[0], 0, 0) * bc_a
+                const Uint8 r = (Uint8)((matrix_get(tri->colors[0], 0, 0) * bc_a
                     + matrix_get(tri->colors[1], 0, 0) * bc_b
-                    + matrix_get(tri->colors[2], 0, 0) * bc_c);
-                const Uint8 g = (Uint8)(matrix_get(tri->colors[0], 1, 0) * bc_a
+                    + matrix_get(tri->colors[2], 0, 0) * bc_c) * light_factor) ;
+                const Uint8 g = (Uint8)((matrix_get(tri->colors[0], 1, 0) * bc_a
                     + matrix_get(tri->colors[1], 1, 0) * bc_b
-                    + matrix_get(tri->colors[2], 1, 0) * bc_c);
-                const Uint8 b = (Uint8)(matrix_get(tri->colors[0], 2, 0) * bc_a
+                    + matrix_get(tri->colors[2], 1, 0) * bc_c) * light_factor);
+                const Uint8 b = (Uint8)((matrix_get(tri->colors[0], 2, 0) * bc_a
                     + matrix_get(tri->colors[1], 2, 0) * bc_b
-                    + matrix_get(tri->colors[2], 2, 0) * bc_c);
+                    + matrix_get(tri->colors[2], 2, 0) * bc_c) * light_factor);
                 
                 SDL_SetRenderDrawColor(renderer, r, g, b, 255);
                 SDL_RenderDrawPoint(renderer, x, y);

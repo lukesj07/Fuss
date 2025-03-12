@@ -6,6 +6,6 @@
 #include <SDL2/SDL.h>
 
 double edge_function(const Matrix* a, const Matrix* b, const Matrix* c);
-void draw_triangle(SDL_Renderer* renderer, Triangle* tri);
+void draw_triangle(SDL_Renderer* renderer, const Triangle* tri, const double light_factor);
 
 #endif // !RENDER_H

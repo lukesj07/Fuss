@@ -135,6 +135,13 @@ int main() {
                 free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
                 continue;
             }
+
+            Matrix* light_vec = matrix_new(3, 1);
+            const double light_arr[] = {0, 0, -1};
+            matrix_init(light_vec, light_arr);
+            matrix_normalize(light_vec);
+            matrix_normalize(cross_prod);
+            const double light_factor = dot_mult(cross_prod, light_vec);
             
             Matrix* proj_results[3];
             for (int j = 0; j < 3; j++) {
@@ -167,12 +174,12 @@ int main() {
             */
 
             Triangle* proj_tri = triangle_new(proj_results, cube_mesh->tris[i].colors);
-            draw_triangle(handler.renderer, proj_tri);
+            draw_triangle(handler.renderer, proj_tri, light_factor);
             free(proj_tri);
 
             free_matrices(proj_results, 3);
             free_matrices(rotated_verts, 3);
-            free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point}, 4);
+            free_matrices((Matrix*[]) {edge_a, edge_b, cross_prod, camera_to_point, light_vec}, 5);
         }
         SDL_RenderPresent(handler.renderer);
         SDL_Delay(16);
