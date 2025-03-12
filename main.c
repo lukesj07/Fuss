@@ -61,9 +61,11 @@ int main() {
         {1, 5, 4}, {1, 4, 0}
     };
     
-    Matrix* red_vec = matrix_new(3, 1);
-    const double red_arr[] = {255, 0, 0};
-    matrix_init(red_vec, red_arr);
+    Matrix* rgb[] = {matrix_new(3, 1), matrix_new(3, 1), matrix_new(3, 1)};
+    const double rgb_arr[][3] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}};
+    for (int i = 0; i < 3; i++) {
+        matrix_init(rgb[i], rgb_arr[i]);
+    }
 
     Mesh* cube_mesh = mesh_new(12);
     for (int i = 0; i < cube_mesh->num_triangles; i++) {
@@ -71,11 +73,10 @@ int main() {
         for (int j = 0; j < 3; j++) {
             vertices[j] = coord_vecs[triangle_indices[i][j]];
         }
-        Triangle* tri = triangle_new(vertices, (Matrix*[]){red_vec, red_vec, red_vec});
+        Triangle* tri = triangle_new(vertices, rgb);
         mesh_set(cube_mesh, i, tri);
         free(tri); // triangle gets copied so must be freed
     }
-    free_matrix(red_vec);
 
 
     VideoHandler handler = {
@@ -179,6 +180,7 @@ int main() {
 
     free_mesh(cube_mesh);
     free_matrices(coord_vecs, 8);
+    free_matrices(rgb, 3);
     free_matrix(rot_matrix);
     free_matrix(proj_matrix);
     free_matrix(camera_pos);
