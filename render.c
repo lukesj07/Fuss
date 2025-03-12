@@ -1,6 +1,5 @@
 #include "render.h"
 #include "linear.h"
-#include <SDL2/SDL_render.h>
 
 double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
     return ((matrix_get(b, 0, 0) - matrix_get(a, 0, 0))
@@ -9,13 +8,17 @@ double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
         * (matrix_get(c, 0, 0) - matrix_get(a, 0, 0)));
 }
 
-void draw_triangle(SDL_Renderer* renderer, Triangle* tri) {
+void draw_triangle(SDL_Renderer* renderer, Triangle* tri) { // add z buffer stuff
     const Matrix* a = tri->vertices[0];
     const Matrix* b = tri->vertices[1];
     const Matrix* c = tri->vertices[2];
     const double abc = edge_function(a, b, c);
 
     if (abc < 0) {
+        matrix_print(a, "a");
+        matrix_print(b, "b");
+        matrix_print(c, "c");
+        fprintf(stderr, "Invalid triangle winding for rasterization (must be clockwise)\n");
         return;
     }
 
@@ -37,9 +40,9 @@ void draw_triangle(SDL_Renderer* renderer, Triangle* tri) {
     Uint8 oldr, oldg, oldb, olda;
     SDL_GetRenderDrawColor(renderer, &oldr, &oldg, &oldb, &olda);
 
-    for (int y = miny; y < maxy; y++) {
+    for (int y = (int)floor(miny); y < (int)ceil(maxy); y++) {
         matrix_set(p, 1, 0, y);
-        for (int x = minx; x < maxx; x++) {
+        for (int x = (int)floor(minx); x < (int)ceil(maxx); x++) {
             matrix_set(p, 0, 0, x);
 
             const double abp = edge_function(a, b, p);

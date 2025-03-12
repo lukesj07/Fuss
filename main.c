@@ -111,7 +111,6 @@ int main() {
         }
         SDL_SetRenderDrawColor(handler.renderer, 0, 0, 0, 255);
         SDL_RenderClear(handler.renderer);
-        SDL_SetRenderDrawColor(handler.renderer, 255, 255, 255, 255);
         // draw
         
         Matrix* new_model = matrix_mult(rot_matrix, model_matrix);
