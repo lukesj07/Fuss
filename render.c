@@ -51,34 +51,47 @@ void draw_triangle(SDL_Renderer* renderer, const Triangle* tri, const double lig
     Matrix* p = matrix_new(2, 1);
     
     for (int y = miny; y <= maxy; y++) {
-        matrix_set(p, 1, 0, y);
+        int x = minx;
+        matrix_init(p, (double[]) {x, y});
         
-        for (int x = minx; x <= maxx; x++) {
-            matrix_set(p, 0, 0, x);
-            
-            const double abp = edge_function(a, b, p);
-            const double bcp = edge_function(b, c, p);
-            const double cap = edge_function(c, a, p);
-            
-            if (abp <= 0 && bcp <= 0 && cap <= 0) {
+        double abp = edge_function(a, b, p);
+        double bcp = edge_function(b, c, p);
+        double cap = edge_function(c, a, p);
+
+        while ((abp > 0 || bcp > 0 || cap > 0) && x <= maxx) {
+            matrix_set(p, 0, 0, ++x);
+
+            abp = edge_function(a, b, p);
+            bcp = edge_function(b, c, p);
+            cap = edge_function(c, a, p);
+        }
+        // now at first point of triangle for scanline
+
+        while (abp <= 0 && bcp <= 0 && cap <= 0 && x <= maxx) {
                 // barycentric coordinates
                 const double bc_a = bcp / abc;
                 const double bc_b = cap / abc;
                 const double bc_c = abp / abc;
                 
-                const Uint8 r = (Uint8)((matrix_get(tri->colors[0], 0, 0) * bc_a
+                const Uint8 red = (Uint8)((matrix_get(tri->colors[0], 0, 0) * bc_a
                     + matrix_get(tri->colors[1], 0, 0) * bc_b
                     + matrix_get(tri->colors[2], 0, 0) * bc_c) * light_factor) ;
-                const Uint8 g = (Uint8)((matrix_get(tri->colors[0], 1, 0) * bc_a
+                const Uint8 green = (Uint8)((matrix_get(tri->colors[0], 1, 0) * bc_a
                     + matrix_get(tri->colors[1], 1, 0) * bc_b
                     + matrix_get(tri->colors[2], 1, 0) * bc_c) * light_factor);
-                const Uint8 b = (Uint8)((matrix_get(tri->colors[0], 2, 0) * bc_a
+                const Uint8 blue = (Uint8)((matrix_get(tri->colors[0], 2, 0) * bc_a
                     + matrix_get(tri->colors[1], 2, 0) * bc_b
                     + matrix_get(tri->colors[2], 2, 0) * bc_c) * light_factor);
                 
-                SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+                SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
                 SDL_RenderDrawPoint(renderer, x, y);
-            }
+
+                
+                matrix_set(p, 0, 0, ++x);
+
+                abp = edge_function(a, b, p);
+                bcp = edge_function(b, c, p);
+                cap = edge_function(c, a, p);
         }
     }
     

@@ -137,7 +137,7 @@ int main() {
             }
 
             Matrix* light_vec = matrix_new(3, 1);
-            const double light_arr[] = {0, 0, -1};
+            const double light_arr[] = {0, 0, 1};
             matrix_init(light_vec, light_arr);
             matrix_normalize(light_vec);
             matrix_normalize(cross_prod);
