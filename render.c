@@ -1,7 +1,7 @@
 #include "render.h"
 #include "linear.h"
 
-double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
+inline double edge_function(const Matrix* a, const Matrix* b, const Matrix* c) {
     return ((matrix_get(b, 0, 0) - matrix_get(a, 0, 0))
         * (matrix_get(c, 1, 0) - matrix_get(a, 1, 0)))
         - ((matrix_get(b, 1, 0) - matrix_get(a, 1, 0))
@@ -84,8 +84,7 @@ void draw_triangle(SDL_Renderer* renderer, const Triangle* tri, const double lig
                     + matrix_get(tri->colors[2], 2, 0) * bc_c) * light_factor);
                 
                 SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
-                SDL_RenderDrawPoint(renderer, x, y);
-
+                SDL_RenderDrawPoint(renderer, x, y); // batch into a buffer to reduce falls to this??
                 
                 matrix_set(p, 0, 0, ++x);
 
